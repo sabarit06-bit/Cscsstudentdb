@@ -1,0 +1,45 @@
+function generateProfile() {
+    // 1. Get values from inputs
+    const name = document.getElementById('name').value;
+    const roll = document.getElementById('roll').value;
+    const dept = document.getElementById('dept').value;
+    const attendance = parseFloat(document.getElementById('attendance').value);
+    
+    // 2. Logic for Status and Color
+    let status = "";
+    let color = "";
+    if (attendance >= 90) {
+        status = "90% - GOOD";
+        color = "green";
+    } else if (attendance >= 80) {
+        status = "80% - AVERAGE";
+        color = "orange";
+    } else if (attendance < 70) {
+        status = "DANGER - BELOW 70%";
+        color = "red";
+    } else {
+        status = "NEEDS IMPROVEMENT";
+        color = "gray";
+    }
+
+    // 3. Logic for Mark Allocation
+    let marks = 0;
+    if (attendance >= 95) marks = 5;
+    else if (attendance >= 85) marks = 4;
+    else if (attendance >= 75) marks = 3;
+    else if (attendance >= 65) marks = 2;
+    else if (attendance >= 60) marks = 1;
+    else marks = 0;
+
+    // 4. Display the results
+    document.getElementById('studentProfile').style.display = "block";
+    document.getElementById('display-name').innerText = name;
+    document.getElementById('display-roll').innerText = roll;
+    document.getElementById('display-dept').innerText = dept;
+    
+    const badge = document.getElementById('status-badge');
+    badge.innerText = status;
+    badge.style.backgroundColor = color;
+    
+    document.getElementById('display-marks').innerText = marks + "m";
+}
