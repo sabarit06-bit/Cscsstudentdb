@@ -1,31 +1,153 @@
-<div class="container" style="margin-top: 20px; max-width: 800px;">
-    <h3>Registered Student List</h3>
-    <table id="studentTable" border="1" style="width:100%; border-collapse: collapse; text-align: left;">
-        <thead>
-            <tr style="background-color: #007bff; color: white;">
-                <th>Roll No</th>
-                <th>Name</th>
-                <th>Dept</th>
-                <th>Attnd %</th>
-                <th>Status</th>
-                <th>Marks</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-            </tbody>
-    </table>
-    <button onclick="clearData()" style="background: red; margin-top: 10px;">Clear All Data</button>
-</div>
-            <div class="upload-section">
-                <h4>Upload Documents</h4>
-                <label>Semester Marksheet:</label>
-                <input type="file" id="marksheet">
-                <label>Certificate (OD):</label>
-                <input type="file" id="certificate">
-            </div>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cscstudentdb - Management System</title>
+    <style>
+        /* CSS STYLING */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2, h3 { color: #1a73e8; border-bottom: 2px solid #e8eaed; padding-bottom: 10px; }
+        
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        input, select { padding: 12px; border: 1px solid #dadce0; border-radius: 8px; font-size: 14px; }
+        input:focus { border-color: #1a73e8; outline: none; }
+        
+        button { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        button:hover { background: #1557b0; }
+        .clear-btn { background: #d93025; margin-top: 20px; width: auto; padding: 8px 15px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 30px; background: white; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: #f8f9fa; color: #5f6368; }
+
+        .badge { padding: 5px 10px; border-radius: 4px; color: white; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        .good { background-color: #1e8e3e; }    /* Green */
+        .avg { background-color: #f9ab00; }     /* Orange */
+        .danger { background-color: #d93025; }  /* Red */
+
+        .upload-box { margin-top: 15px; font-size: 13px; color: #5f6368; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Cscstudentdb - Teacher Dashboard</h2>
+    
+    <div class="input-grid">
+        <input type="text" id="name" placeholder="Student Name">
+        <input type="text" id="roll" placeholder="Roll Number">
+        <select id="dept">
+            <option value="Computer Science">Computer Science</option>
+            <option value="IT">IT</option>
+            <option value="ECE">ECE</option>
+        </select>
+        <input type="number" id="attendance" placeholder="Attendance %">
     </div>
 
-    <script src="script.js"></script>
+    <div class="upload-box">
+        <label>Upload Marksheet (PDF/JPG):</label>
+        <input type="file" id="marksheet">
+        <label>Upload Certificate (OD):</label>
+        <input type="file" id="cert">
+    </div>
+
+    <button onclick="addStudent()">Save Student Data</button>
+
+    <h3>Student Database</h3>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Dept</th>
+                    <th>Attnd %</th>
+                    <th>Status</th>
+                    <th>Bonus</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                </tbody>
+        </table>
+    </div>
+    
+    <button class="clear-btn" onclick="clearDatabase()">Reset Database</button>
+</div>
+
+<script>
+    // JAVASCRIPT LOGIC
+    window.onload = function() {
+        renderTable();
+    };
+
+    function addStudent() {
+        const name = document.getElementById('name').value;
+        const roll = document.getElementById('roll').value;
+        const dept = document.getElementById('dept').value;
+        const attnd = parseFloat(document.getElementById('attendance').value);
+
+        if (!name || !roll || isNaN(attnd)) {
+            alert("Please enter all details correctly.");
+            return;
+        }
+
+        // 1. Determine Status
+        let statusClass = "";
+        let statusText = "";
+        if (attnd >= 90) { statusText = "90% Good"; statusClass = "good"; }
+        else if (attnd >= 80) { statusText = "80% Avg"; statusClass = "avg"; }
+        else { statusText = "Danger 70%"; statusClass = "danger"; }
+
+        // 2. Mark Allocation Logic
+        let marks = "0m";
+        if (attnd >= 95) marks = "5m";
+        else if (attnd >= 85) marks = "4m";
+        else if (attnd >= 75) marks = "3m";
+        else if (attnd >= 65) marks = "2m";
+        else if (attnd >= 60) marks = "1m";
+
+        const studentObj = { name, roll, dept, attnd, statusText, statusClass, marks };
+
+        // Save to LocalStorage
+        let db = JSON.parse(localStorage.getItem('csc_db')) || [];
+        db.push(studentObj);
+        localStorage.setItem('csc_db', JSON.stringify(db));
+
+        // Reset fields and Refresh
+        document.getElementById('name').value = '';
+        document.getElementById('roll').value = '';
+        document.getElementById('attendance').value = '';
+        renderTable();
+    }
+
+    function renderTable() {
+        const db = JSON.parse(localStorage.getItem('csc_db')) || [];
+        const tableBody = document.getElementById('tableBody');
+        tableBody.innerHTML = "";
+
+        db.forEach(student => {
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${student.roll}</td>
+                    <td>${student.name}</td>
+                    <td>${student.dept}</td>
+                    <td>${student.attnd}%</td>
+                    <td><span class="badge ${student.statusClass}">${student.statusText}</span></td>
+                    <td><strong>${student.marks}</strong></td>
+                </tr>
+            `;
+        });
+    }
+
+    function clearDatabase() {
+        if (confirm("Are you sure you want to delete all student records?")) {
+            localStorage.removeItem('csc_db');
+            renderTable();
+        }
+    }
+</script>
+
 </body>
 </html>
