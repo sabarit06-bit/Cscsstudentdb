@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Management Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h2>Teacher Dashboard - Attendance & Marks</h2>
+        
+        <div class="input-section">
+            <input type="text" id="name" placeholder="Student Name">
+            <input type="text" id="roll" placeholder="Roll No">
+            <select id="dept">
+                <option value="CS">Computer Science</option>
+                <option value="IT">Information Technology</option>
+                <option value="ECE">Electronics</option>
+            </select>
+            <input type="number" id="attendance" placeholder="Attendance %">
+            <button onclick="generateProfile()">Update Student Profile</button>
+        </div>
+
+        <hr>
+
+        <div id="studentProfile" class="profile-card" style="display:none;">
+            <h3>Student Profile</h3>
+            <p><strong>Name:</strong> <span id="display-name"></span></p>
+            <p><strong>Roll No:</strong> <span id="display-roll"></span></p>
+            <p><strong>Department:</strong> <span id="display-dept"></span></p>
+            
+            <div id="status-badge" class="badge"></div>
+            
+            <p><strong>Bonus Marks Allocated:</strong> <span id="display-marks"></span></p>
+            
+            <div class="upload-section">
+                <h4>Upload Documents</h4>
+                <label>Semester Marksheet:</label>
+                <input type="file" id="marksheet">
+                <label>Certificate (OD):</label>
+                <input type="file" id="certificate">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
